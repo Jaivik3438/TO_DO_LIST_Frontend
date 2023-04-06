@@ -16,7 +16,50 @@ import { useNavigate } from "react-router-dom";
 const BASE_URL = require("../utils/url").default;
 
 const AddYourList = (props) => {
+
+
     const navigate = useNavigate()
+    const [file, setFile] = useState(null);
+
+    useEffect(() => {
+        console.log(file);
+    }, [file]);
+
+    const handleFileSelect = (event) => {
+        setFile(event.target.files[0]);
+
+        const formData = new FormData();
+        formData.append('image', event.target.files[0]);
+
+        axios.post(`${BASE_URL}extractText`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        })
+            .then(res => {
+                console.log(res.data.split('\n'))
+                if (res.status === 200) {
+                    //alert('Data extracted.')
+                    const extrctedData = res.data.split('\n')
+                    setFormValues((prevState) => {
+                        const newState = { ...prevState };
+                        Object.keys(newState).forEach((key, index) => {
+                            newState[key].value = extrctedData[index];
+                        });
+                        return newState;
+                    });
+                } else {
+                    alert('Error.')
+                }
+            }).catch(err => {
+                console.log(err)
+            });
+    };
+
+    // useEffect(() => {
+    //   console.log(file);
+    // }, [file]);
+
     const [formValues, setFormValues] = useState({
         taskName: {
             value: "",
@@ -47,9 +90,17 @@ const AddYourList = (props) => {
 
     const handleSubmit = () => {
         //console.log(email, password)
+        const userData = JSON.parse(localStorage.getItem('userData'));
+        const user_id = userData.userDetails.email;
         axios.post(`${BASE_URL}todo/add`,
             {
-                user_id: formValues.taskName.value,
+                //             "user_id": "rekevib802@marikuza.com",
+                // "task_title": "Task12",
+                // "task_description": "taskDescription45 taskDescription2 taskDescription2",
+                // "task_due_date": "2023-04-04T04:00:01.378Z",
+                // "is_completed": "false"
+                user_id: user_id,
+                task_title: formValues.taskName.value,
                 task_description: formValues.taskDescription.value,
                 task_due_date: formValues.taskDueDate.value,
                 task_reminder_date: formValues.reminderTime.value,
@@ -207,52 +258,52 @@ const AddYourList = (props) => {
                                         helperText={formValues.taskDescription.errorMessage}
                                     />
                                 </Grid>
-                                {/* <Grid item xs={12}>
-              <TextField
-                required
-                id="taskDueDate"
-                name="taskDueDate"
-                label="Task DueDate"
-                type="text"
-                value={formValues.taskDueDate.value}
-                onChange={handleChange}
-                variant="outlined"
-                fullWidth
-                error={
-                  formValues.taskDueDate.errorMessage === ""
-                    ? false
-                    : true
-                }
-                helperText={formValues.taskDueDate.errorMessage}
-              />
-            </Grid> */}
                                 <Grid item xs={12}>
-                                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                    <DatePicker sx={{ width: '100%' }}
+                                    <TextField
                                         required
                                         id="taskDueDate"
                                         name="taskDueDate"
                                         label="Task DueDate"
+                                        type="text"
                                         value={formValues.taskDueDate.value}
-                                        onChange={(newValue) =>
-                                            handleChange({
-                                                target: { name: "taskDueDate", value: newValue },
-                                            })
+                                        onChange={handleChange}
+                                        variant="outlined"
+                                        fullWidth
+                                        error={
+                                            formValues.taskDueDate.errorMessage === ""
+                                                ? false
+                                                : true
                                         }
-                                        renderInput={(params) => (
-                                            <TextField
-                                                {...params}
-                                                variant="outlined"
-                                                fullWidth
-                                                error={
-                                                    formValues.taskDueDate.errorMessage === "" ? false : true
-                                                }
-                                                helperText={formValues.taskDueDate.errorMessage}
-                                            />
-                                        )}
+                                        helperText={formValues.taskDueDate.errorMessage}
                                     />
-                                    </LocalizationProvider>
                                 </Grid>
+                                {/* <Grid item xs={12}>
+                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                        <DatePicker sx={{ width: '100%' }}
+                                            required
+                                            id="taskDueDate"
+                                            name="taskDueDate"
+                                            label="Task DueDate"
+                                            value={formValues.taskDueDate.value}
+                                            onChange={(newValue) =>
+                                                handleChange({
+                                                    target: { name: "taskDueDate", value: newValue },
+                                                })
+                                            }
+                                            renderInput={(params) => (
+                                                <TextField
+                                                    {...params}
+                                                    variant="outlined"
+                                                    fullWidth
+                                                    error={
+                                                        formValues.taskDueDate.errorMessage === "" ? false : true
+                                                    }
+                                                    helperText={formValues.taskDueDate.errorMessage}
+                                                />
+                                            )}
+                                        />
+                                    </LocalizationProvider>
+                                </Grid> */}
                                 <Grid item xs={12} >
                                     <TextField
                                         required
@@ -271,6 +322,20 @@ const AddYourList = (props) => {
                                         }
                                         helperText={formValues.reminderTime.errorMessage}
                                     />
+                                </Grid>
+                                {/* 
+                                <Grid item xs={12} sm={6}>
+                                    <input type="file" onChange={handleFileSelect} />
+                                    *Upload Profile Photo
+                                </Grid> */}
+                                <Grid item xs={12} sm={6}>
+                                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                                        <label htmlFor="photoInput" style={{ marginRight: '16px' }}>Upload Profile Photo:</label>
+                                        {/* <div style={{ position: 'relative' }}> */}
+                                        <input type="file" component="span" variant="outlined" id="photoInput" onChange={handleFileSelect} />
+                                        {/* <Button variant="outlined" component="span">Choose File</Button> */}
+                                        {/* </div> */}
+                                    </div>
                                 </Grid>
 
                                 <Grid item xs={12}>
