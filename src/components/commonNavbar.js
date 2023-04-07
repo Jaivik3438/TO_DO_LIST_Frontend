@@ -82,20 +82,20 @@ function CommonNavbar() {
                 <Button
                   sx={{ my: 2, display: "block", color: "#1e69ba" }}
                   onClick={() => {
-                    navigate("/comingsoon");
+                    navigate("/dashboard");
                   }}
                 >
-                  My List
+                  My TO DO List
                 </Button>
               </MenuItem>
               <MenuItem>
                 <Button
                   sx={{ my: 2, display: "block", color: "#1e69ba" }}
                   onClick={() => {
-                    navigate("/comingsoon");
+                    navigate("/add-to-do-list");
                   }}
                 >
-                  Add List
+                  Add TO DO List
                 </Button>
               </MenuItem>
               <MenuItem>

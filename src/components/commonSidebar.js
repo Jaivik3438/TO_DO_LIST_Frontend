@@ -55,13 +55,13 @@ export default function CommonSidebar() {
         <List>
           <CustomListItem
             to="/add-to-do-list"
-            primary="Add List"
+            primary="Add TO DO List"
             tag={<AddIcon fontSize="large" />}
           />
           <br/>
           <CustomListItem
             to="/dashboard"
-            primary="My List"
+            primary="My TO DO List"
             tag={<VisibilityIcon fontSize="large" />}
           />
           {/* <CustomListItem

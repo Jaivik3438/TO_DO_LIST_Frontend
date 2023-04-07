@@ -1,3 +1,4 @@
+import { useLocation } from 'react-router-dom';
 import React, { useState, useEffect } from "react";
 import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
@@ -15,71 +16,22 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { useNavigate } from "react-router-dom";
 const BASE_URL = require("../utils/url").default;
 
-const AddYourList = (props) => {
+const UpdateToDoList = () => {
 
-
-    const navigate = useNavigate()
-    const [file, setFile] = useState(null);
-
-    useEffect(() => {
-        console.log(file);
-    }, [file]);
-
-    const handleFileSelect = (event) => {
-        setFile(event.target.files[0]);
-
-        const formData = new FormData();
-        formData.append('image', event.target.files[0]);
-
-        axios.post(`${BASE_URL}extractText`, formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-        })
-            .then(res => {
-                console.log(res.data.split('\n'))
-                if (res.status === 200) {
-                    //alert('Data extracted.')
-                    const extrctedData = res.data.split('\n')
-                    setFormValues((prevState) => {
-                        const newState = { ...prevState };
-                        Object.keys(newState).forEach((key, index) => {
-                            newState[key].value = extrctedData[index];
-                        });
-                        return newState;
-                    });
-                } else {
-                    alert('Error.')
-                }
-            }).catch(err => {
-                console.log(err)
-            });
-    };
-
-    // useEffect(() => {
-    //   console.log(file);
-    // }, [file]);
-
-    const [formValues, setFormValues] = useState({
-        taskName: {
-            value: "",
-            errorMessage: ""
-        },
-        taskDescription: {
-            value: "",
-            errorMessage: ""
-        },
-        taskDueDate: {
-            value: "",
-            errorMessage: ""
-        },
-        reminderTime: {
-            value: "",
-            errorMessage: ""
-        },
-    })
     const [isValidateForm, setIsValidateForm] = useState(false);
-    
+    const location = useLocation();
+    const navigate = useNavigate()
+    const { record } = location.state;
+    const task_id = record.task_id;
+    const is_completed = record.is_completed;
+    console.log(record);
+    const [formValues, setFormValues] = useState({
+        taskName: { value: record.task_title || '', errorMessage: '' },
+        taskDescription: { value: record.task_description || '', errorMessage: '' },
+        taskDueDate: { value: record.task_due_date || '', errorMessage: '' },
+        reminderTime: { value: record.task_reminder_date || '', errorMessage: '' }
+    });
+
     const handleChange = (event) => {
         const { name, value } = event.target;
         setFormValues({
@@ -87,12 +39,50 @@ const AddYourList = (props) => {
             [name]: { ...formValues[name], value }
         })
     };
+    // const [file, setFile] = useState(null);
+
+    // useEffect(() => {
+    //     console.log(file);
+    // }, [file]);
+
+
+    // const handleFileSelect = (event) => {
+    //     setFile(event.target.files[0]);
+
+    //     const formData = new FormData();
+    //     formData.append('image', event.target.files[0]);
+
+    //     axios.post(`${BASE_URL}extractText`, formData, {
+    //         headers: {
+    //             'Content-Type': 'multipart/form-data',
+    //         },
+    //     })
+    //         .then(res => {
+    //             console.log(res.data.split('\n'))
+    //             if (res.status === 200) {
+    //                 //alert('Data extracted.')
+    //                 const extrctedData = res.data.split('\n')
+    //                 setFormValues((prevState) => {
+    //                     const newState = { ...prevState };
+    //                     Object.keys(newState).forEach((key, index) => {
+    //                         newState[key].value = extrctedData[index];
+    //                     });
+    //                     return newState;
+    //                 });
+    //             } else {
+    //                 alert('Error.')
+    //             }
+    //         }).catch(err => {
+    //             console.log(err)
+    //         });
+    // };
 
     const handleSubmit = () => {
         //console.log(email, password)
         const userData = JSON.parse(localStorage.getItem('userData'));
         const user_id = userData.userDetails.email;
-        axios.post(`${BASE_URL}todo/add`,
+        console.log(user_id);
+        axios.put(`${BASE_URL}todo/update/${task_id}`,
             {
                 //             "user_id": "rekevib802@marikuza.com",
                 // "task_title": "Task12",
@@ -100,6 +90,8 @@ const AddYourList = (props) => {
                 // "task_due_date": "2023-04-04T04:00:01.378Z",
                 // "is_completed": "false"
                 user_id: user_id,
+                task_id: task_id,
+                is_completed : is_completed,
                 task_title: formValues.taskName.value,
                 task_description: formValues.taskDescription.value,
                 task_due_date: formValues.taskDueDate.value,
@@ -117,17 +109,6 @@ const AddYourList = (props) => {
                 console.log(err)
             })
     }
-
-    useEffect(() => {
-        if (isValidateForm) {
-            handleSubmit();
-        }
-    }, [isValidateForm]);
-
-    const handleChangeWithValidate = (event) => {
-        validate(event);
-
-    };
 
     const validate = (event) => {
         event.preventDefault();
@@ -189,6 +170,18 @@ const AddYourList = (props) => {
         setIsValidateForm(isValidate);
     };
 
+    useEffect(() => {
+        if (isValidateForm) {
+            handleSubmit();
+        }
+    }, [isValidateForm]);
+
+    const handleChangeWithValidate = (event) => {
+        validate(event);
+
+    };
+
+
     return (
         <React.Fragment>
 
@@ -218,7 +211,7 @@ const AddYourList = (props) => {
                             <Grid container spacing={3}>
                                 <Grid item xs={12} sm={6} sx={{ margin: 'auto' }}>
                                     <Typography variant="h4" color="#2196F3" component="h4">
-                                        Add Your TO DO List
+                                         Update Your TO DO List
                                     </Typography>
                                 </Grid>
                                 <Grid item xs={12}>
@@ -329,29 +322,20 @@ const AddYourList = (props) => {
                                     <input type="file" onChange={handleFileSelect} />
                                     *Upload Profile Photo
                                 </Grid> */}
-                                <Grid item xs={12} sm={6}>
+                                {/* <Grid item xs={12} sm={6}>
                                     <div style={{ display: 'flex', alignItems: 'center' }}>
                                         <label htmlFor="photoInput" style={{ marginRight: '16px' }}>Upload Profile Photo:</label>
-                                        {/* <div style={{ position: 'relative' }}> */}
                                         <input type="file" component="span" variant="outlined" id="photoInput" onChange={handleFileSelect} />
-                                        {/* <Button variant="outlined" component="span">Choose File</Button> */}
-                                        {/* </div> */}
+                                        
                                     </div>
-                                </Grid>
+                                </Grid> */}
 
                                 <Grid item xs={12}>
-                                    <Button variant="contained" onClick={handleChangeWithValidate}>
+                                    <Button variant="contained"
+                                    onClick={handleChangeWithValidate}>
                                         Add List
                                     </Button>
-                                </Grid>
-                                <Grid item xs={4} sm={4} md={4}>
-                                    {/* {
-                isValidateForm ?
-                  <Typography variant="h6" component="h6" color={"green"}>
-                    User Registered Successfully.
-                  </Typography> : ""
-              } */}
-                                </Grid>
+                                </Grid> 
                             </Grid>
                         </Paper>
                     </Container>
@@ -360,5 +344,4 @@ const AddYourList = (props) => {
         </React.Fragment>
     )
 }
-
-export default AddYourList;
+export default UpdateToDoList;
