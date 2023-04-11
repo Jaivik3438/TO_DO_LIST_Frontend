@@ -213,9 +213,9 @@ const Registration = (props) => {
               <Typography variant="h4" color="#2196F3" component="h4">
                 Registration
               </Typography>
-              <Stack direction="row" justifyContent="space-between" style={{ fontSize: 14 }}>
+              {/* <Stack direction="row" justifyContent="space-between" style={{ fontSize: 14 }}>
                 Are you doctor?<Link href="registrationdoctor" color={"#FF9800"} style={{ fontSize: 13 }}>Register Here</Link>
-              </Stack>
+              </Stack> */}
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
