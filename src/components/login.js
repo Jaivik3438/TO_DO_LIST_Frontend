@@ -210,7 +210,7 @@ const Login = () => {
                                 control={<Checkbox style={{ left: 10 }} size="small" />} label={<Typography style={{ fontSize: 9 }} variant="caption" align="inherit">Remember me</Typography>}
                             /> */}
 
-                            <Link href="/forgotPassword" style={{ fontSize: 13 }} color={"#FF9800"} align="right">Forgot Password?</Link>
+                            {/* <Link href="/forgotPassword" style={{ fontSize: 13 }} color={"#FF9800"} align="right">Forgot Password?</Link> */}
                         </Grid>
                         <Grid item xs={4} sm={4} md={4}>
                             {<Grid color="red">{formValues.authentication.errorMessage}</Grid>}

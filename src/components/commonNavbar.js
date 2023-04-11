@@ -111,7 +111,7 @@ function CommonNavbar() {
               </MenuItem>
             </Menu>
           </Box>
-          <Typography
+          {/* <Typography
             variant="h6"
             noWrap
             sx={{
@@ -120,7 +120,7 @@ function CommonNavbar() {
             }}
           >
            To-DO
-          </Typography>
+          </Typography> */}
           <Typography
             variant="h6"
             noWrap
@@ -130,7 +130,7 @@ function CommonNavbar() {
               marginRight: "10px",
             }}
           >
-            List
+           To-DO-List
           </Typography>
         </Toolbar>
       </Container>
